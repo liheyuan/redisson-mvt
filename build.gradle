@@ -12,6 +12,7 @@ repositories {
 dependencies {
     // src dep
     compile 'org.redisson:redisson:3.5.7'
+    compile 'commons-io:commons-io:2.6'
 
     // test dep
     testCompile 'junit:junit:4.12'

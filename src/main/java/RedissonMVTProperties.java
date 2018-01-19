@@ -31,16 +31,8 @@ public class RedissonMVTProperties {
         }
     }
 
-    public String[] getSentinelList() {
-        return properties.getProperty("sentinelList").split(",");
-    }
-
-    public String getMasterName() {
-        return properties.getProperty("masterName");
-    }
-
-    public String getPassword() {
-        return properties.getProperty("password");
+    public String getSingleServerAddress() {
+        return properties.getProperty("serverAddress");
     }
 
 }

@@ -23,14 +23,10 @@ public class TutorialApp {
             System.exit(-1);
         }
 
-        System.out.println(prop.getMasterName());
-
-        // use sentinel config
+        // use single server config
         Config config = new Config();
-        config.useSentinelServers()
-                .setMasterName(prop.getMasterName())
-                .addSentinelAddress(prop.getSentinelList())
-                .setPassword(prop.getPassword());
+        config.useSingleServer()
+                .setAddress(prop.getSingleServerAddress());
 
         // get redissonClient
         RedissonClient redissonClient = Redisson.create(config);

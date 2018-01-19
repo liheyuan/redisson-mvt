@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+}
+
+dependencies {
+    // src dep
+    compile 'org.redisson:redisson:3.5.7'
+
+    // test dep
+    testCompile 'junit:junit:4.12'
+}
+
+// Define the main class for the application
+mainClassName = 'App'
+

@@ -1,22 +1,20 @@
-/**
- * @(#)TutorialApp.java, Jan 19, 2018.
+package com.coder4.redisson; /**
+ * @(#)RedissonClientUtil.java, Jan 20, 2018.
  * <p>
  * Copyright 2018 fenbi.com. All rights reserved.
  * FENBI.COM PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 import org.redisson.Redisson;
-import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 
 /**
  * @author coder4
  */
-public class TutorialApp {
+public class RedissonClientUtils {
 
-    public static void main(String[] args) {
-
+    public static RedissonClient createClient() {
         RedissonMVTProperties prop = new RedissonMVTProperties();
         if (!prop.init()) {
             System.err.println("prop load failed");
@@ -28,15 +26,7 @@ public class TutorialApp {
         config.useSingleServer()
                 .setAddress(prop.getSingleServerAddress());
 
-        // get redissonClient
-        RedissonClient redissonClient = Redisson.create(config);
-
-        RSet<Long> testSet = redissonClient.getSet("test1");
-        testSet.add(1l);
-        System.out.println(testSet.size());
-
-        // shutdown
-        redissonClient.shutdown();
+        return Redisson.create(config);
     }
 
 }

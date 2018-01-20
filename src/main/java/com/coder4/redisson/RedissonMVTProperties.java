@@ -1,4 +1,4 @@
-/**
+package com.coder4.redisson; /**
  * @(#)RedissonMVTConfig.java, Jan 19, 2018.
  * <p>
  * Copyright 2018 fenbi.com. All rights reserved.

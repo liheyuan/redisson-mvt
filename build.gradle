@@ -13,6 +13,8 @@ dependencies {
     // src dep
     compile 'org.redisson:redisson:3.5.7'
     compile 'commons-io:commons-io:2.6'
+    compile 'org.msgpack:jackson-dataformat-msgpack:0.8.11'
+    compile 'com.esotericsoftware:kryo:4.0.1'
 
     // test dep
     testCompile 'junit:junit:4.12'

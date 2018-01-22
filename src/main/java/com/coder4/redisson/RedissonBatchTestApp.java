@@ -6,6 +6,7 @@
  */
 package com.coder4.redisson;
 
+import org.redisson.api.BatchResult;
 import org.redisson.api.RBatch;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RScoredSortedSetAsync;
@@ -33,6 +34,7 @@ public class RedissonBatchTestApp {
         // zscore as an example
         System.out.println("======RScoredSortedSet Batch Test======");
         RScoredSortedSetAsync<Abc> rssSet = batch.getScoredSortedSet("rssSetBT"); // get async
+        rssSet.deleteAsync();
         for (int i = 0; i < 10; i++) {
             rssSet.addAsync(i * 10, new Abc(i, "abc" + i));
         }
@@ -52,7 +54,9 @@ public class RedissonBatchTestApp {
                 0, -1);
 
         // end batch
-        batch.execute();
+        System.out.println("batch execute result:");
+        BatchResult<?> result = batch.execute();
+        result.forEach(System.out::println);
 
         System.out.println("valueRangeReversed:");
         future1.get().stream().forEach(s -> System.out.println(s));

@@ -8,6 +8,7 @@ package com.coder4.redisson; /**
 import org.apache.commons.io.IOUtils;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBinaryStream;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RBucket;
 import org.redisson.api.RHyperLogLog;
 import org.redisson.api.RTopic;
@@ -41,7 +42,6 @@ public class RedissonObjectApp {
         try {
             RBinaryStream rstream = redissonClient.getBinaryStream("rstream");
             rstream.delete();
-            rstream.delete();
             // file -> redis
             IOUtils.copy(
                     RedissonObjectApp.class.getClassLoader().getResourceAsStream("data.txt")
@@ -55,22 +55,39 @@ public class RedissonObjectApp {
         // AtomicLong
         System.out.println("======AtomicLong======");
         RAtomicLong ralong = redissonClient.getAtomicLong("ralong");
-        ralong.delete();
+        ralong.getAndIncrement(); // Important for first time or may npe
         System.out.println("ralong old " + ralong.getAndSet(1));
         System.out.println("ralong new " + ralong.get());
         System.out.println("ralong inc " + ralong.incrementAndGet());
 
-        // topic
-        System.out.println("======RTopic======");
-        RTopic<String> topic = redissonClient.getTopic("anyTopic");
-        topic.addListener((channel, message) -> {
-            System.out.println("subscribe: " + message);
+        // topic / listener
+        System.out.println("======RTopic / Listener======");
+
+        // must listen first ! strange
+        Thread listenThread = new Thread(() -> {
+            RTopic<String> topic = redissonClient.getTopic("anyTopic");
+            topic.addListener((channel, message) -> {
+                synchronized (System.out) {
+                    System.out.println("subscribe: " + message);
+                    System.out.flush();
+                }
+            });
+            try {
+                Thread.sleep(2000);
+            } catch (Exception e) {
+
+            }
         });
+        listenThread.start();
 
         String content = "test topic";
-        System.out.println("publish: " + content);
+        synchronized (System.out) {
+            System.out.println("publish: " + content);
+        }
+        RTopic<String> topic = redissonClient.getTopic("anyTopic");
         topic.publish(content);
-        Thread.sleep(TimeUnit.SECONDS.toSeconds(5));
+        Thread.sleep(2000);
+        listenThread.join();
 
         // RHyperLogLog
         System.out.println("======RHyperLogLog======");
@@ -78,9 +95,19 @@ public class RedissonObjectApp {
         log.add(1);
         log.add(2);
         log.add(3);
+        System.out.println("count: " + log.count());
 
-        log.count();
-
+        // RBloomFilter
+        System.out.println("======RHyperLogLog======");
+        RBloomFilter<Integer> bloomFilter = redissonClient.getBloomFilter("rbf");
+        bloomFilter.delete();
+        System.out.println("already init: " + bloomFilter.tryInit(10000, 0.00001));
+        System.out.println(bloomFilter.getSize());
+        for (int i = 0; i < 10; i++) {
+            bloomFilter.add(i);
+        }
+        System.out.println("is 6 in: " + bloomFilter.contains(6));
+        System.out.println("is 50000 in: " + bloomFilter.contains(50000));
 
 
         // shutdown

@@ -52,7 +52,7 @@ public class RedissonSerdeApp {
 
         // List with Custom SepCodec
         System.out.println("======RList with SepCodec======");
-        RList<Abc> rlistSepCodec = redissonClient.getList("rlistSepCodec", new SepCodec());
+        RList<Abc> rlistSepCodec = redissonClient.getList("rlistSepCodec", new SepCodec(Abc.class));
         rlistSepCodec.delete();
         adds(rlistSepCodec);
         rlistSepCodec.forEach(abc -> System.out.println(abc));

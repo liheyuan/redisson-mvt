@@ -24,7 +24,11 @@ public class SepCodec implements Codec {
 
     private final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-    private Class<? extends Sepable> cls = Abc.class;
+    private Class<? extends Sepable> cls;
+
+    public SepCodec(Class<? extends Sepable> cls) {
+        this.cls = cls;
+    }
 
     private final Encoder encoder = in -> {
         if (in instanceof Sepable) {

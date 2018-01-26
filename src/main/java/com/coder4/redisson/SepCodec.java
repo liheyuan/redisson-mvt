@@ -6,7 +6,6 @@
  */
 package com.coder4.redisson;
 
-import com.esotericsoftware.minlog.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.redisson.client.codec.Codec;
@@ -31,13 +30,11 @@ public class SepCodec implements Codec {
     }
 
     private final Encoder encoder = in -> {
+        ByteBuf out = ByteBufAllocator.DEFAULT.buffer();
         if (in instanceof Sepable) {
-            ByteBuf out = ByteBufAllocator.DEFAULT.buffer();
             out.writeCharSequence(((Sepable) in).toSepString(), DEFAULT_CHARSET);
-            return out;
-        } else {
-            return ByteBufAllocator.DEFAULT.buffer();
         }
+        return out;
     };
 
     private final Decoder<Object> decoder = (buf, state) -> {
@@ -49,11 +46,9 @@ public class SepCodec implements Codec {
             buf.readerIndex(buf.readableBytes());
             return obj.fromSepString(str);
         } catch (NoSuchMethodException e) {
-            Log.error("getConstructor failed during decode", e);
             return new Object();
         } catch (Exception e) {
-            Log.error("other exception during decode", e);
-            return null;
+            return new Object();
         }
     };
 
